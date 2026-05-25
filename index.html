@@ -253,7 +253,7 @@
     <p>Займёт ~3 минуты</p>
   </div>
   <div style="max-width:520px;margin:0 auto;padding:16px 16px 0;">
-    <div style="background:#1a1f0e;border:1px solid rgba(212,240,74,0.2);border-radius:14px;padding:16px 18px;font-size:13px;line-height:1.65;color:#bbb;">
+    <div style="background:#1a1f0e;border:1px solid rgba(212,240,74,0.2);border-radius:14px;padding:16px 18px;font-size:15px;line-height:1.65;color:#bbb;">
       Твои ответы помогут нам понять, чего не хватает — и скорректировать программу так, чтобы ты получила максимум <span style="color:#D4F04A;font-weight:700;">ещё до окончания интенсива</span>.
     </div>
   </div>
@@ -527,7 +527,54 @@
 <script>
   const MAKE_WEBHOOK_URL = 'https://hook.eu2.make.com/3gthnu2avuh57wvwmk1dylw75rjak9bm';
 
-  const state = {
+  const LABELS = {
+    q1: {
+      yes:       'Да, чувствую всегда',
+      sometimes: 'Да, но не всегда',
+      no:        'Не чувствую',
+    },
+    q2: {
+      feel_body:       'Понимаю и чувствую телом',
+      understand_head: 'Понимаю головой, но тело ещё не всегда слушается',
+      still_hard:      'Пока сложно и понять, и почувствовать',
+    },
+    q3: {
+      no:  'Нет, всё ок',
+      yes: 'Да',
+    },
+    q4: {
+      lowered: 'Да, снизила — теперь фокус на ощущении',
+      same:    'Нет, оставила тот же вес',
+      unsure:  'Ещё не определилась',
+    },
+    q5: {
+      no_feel:       'Не чувствую мышцы в некоторых упражнениях',
+      not_sure:      'Не уверена в правильности техники',
+      need_feedback: 'Нужна обратная связь по моему видео',
+      discomfort:    'Мешает дискомфорт / болевые ощущения',
+      no_time:       'Не хватает времени на тренировки',
+    },
+    q9: {
+      better:  'Лучше, чем ожидала',
+      match:   'Совпадает с ожиданиями',
+      partial: 'Частично совпадает',
+      less:    'Ожидала большего',
+    },
+    q10: {
+      yes: 'Да',
+      no:  'Нет',
+    },
+  };
+
+  function label(group, val) {
+    if (!val) return null;
+    return LABELS[group]?.[val] ?? val;
+  }
+
+  function labelList(group, arr) {
+    if (!arr || arr.length === 0) return null;
+    return arr.map(v => LABELS[group]?.[v] ?? v).join(', ');
+  }
     q1: null, q1_text: '',
     q2: null,
     q3: null, q3_text: '',
@@ -644,20 +691,20 @@
     btn.textContent = 'Отправляем…';
 
     const payload = {
-      q1_feel_muscles:        state.q1,
+      q1_feel_muscles:        label('q1', state.q1),
       q1_muscles_instead:     state.q1_text || null,
-      q2_tech_understanding:  state.q2,
-      q3_discomfort:          state.q3,
+      q2_tech_understanding:  label('q2', state.q2),
+      q3_discomfort:          label('q3', state.q3),
       q3_discomfort_detail:   state.q3_text || null,
-      q4_weight_approach:     state.q4,
-      q5_barriers:            state.q5.join(', ') || null,
+      q4_weight_approach:     label('q4', state.q4),
+      q5_barriers:            labelList('q5', state.q5),
       q6_hardest_exercises:   state.q6.join(', ') || null,
       q7_need_help:           state.q7.join(', ') || null,
       q8_info_rating:         state.q8_stars,
       q8_missing_info:        state.q8_text || null,
-      q9_expectations:        state.q9,
+      q9_expectations:        label('q9', state.q9),
       q9_expectations_detail: state.q9_text || null,
-      q10_has_question:       state.q10,
+      q10_has_question:       label('q10', state.q10),
       q10_question_text:      state.q10_text || null,
       submitted_at:           new Date().toISOString(),
     };
