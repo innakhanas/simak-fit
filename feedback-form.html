@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Обратная связь · Интенсив Техника</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+  :root {
+    --bg: #0F0F0F;
+    --surface: #181818;
+    --surface2: #222222;
+    --border: #2A2A2A;
+    --accent: #D4F04A;
+    --accent-dim: rgba(212,240,74,0.12);
+    --text: #F0F0F0;
+    --text-sec: #888;
+    --text-dim: #555;
+    --danger: #FF5F5F;
+    --radius: 14px;
+    --radius-sm: 10px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 20px 20px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .badge {
+    display: inline-block;
+    background: var(--accent);
+    color: #0F0F0F;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-bottom: 10px;
+  }
+  .header h1 {
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 1.25;
+    margin-bottom: 4px;
+  }
+  .header p { font-size: 12px; color: var(--text-sec); }
+
+  /* ── Progress ── */
+  .progress-wrap {
+    padding: 14px 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+  .progress-track {
+    flex: 1; height: 3px;
+    background: var(--border);
+    border-radius: 99px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; background: var(--accent);
+    border-radius: 99px;
+    transition: width .4s ease; width: 0%;
+  }
+  .progress-label {
+    font-size: 11px; color: var(--text-dim);
+    font-weight: 600; min-width: 36px; text-align: right;
+  }
+
+  /* ── Form body ── */
+  .form-body {
+    padding: 20px 16px 0;
+    display: flex; flex-direction: column; gap: 14px;
+    max-width: 520px; margin: 0 auto;
+  }
+
+  /* ── Question card ── */
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+  }
+  .q-head { padding: 18px 18px 14px; }
+  .q-num {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: .1em; color: var(--accent);
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .q-title { font-size: 15px; font-weight: 700; line-height: 1.4; color: var(--text); }
+  .q-hint { font-size: 12px; color: var(--text-sec); margin-top: 3px; }
+
+  /* ── Radio ── */
+  .radio-group { padding: 0 18px 18px; display: flex; flex-direction: column; gap: 8px; }
+  .radio-option {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 13px 14px; cursor: pointer;
+    transition: all .18s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .radio-option:active { transform: scale(0.98); }
+  .radio-option.selected { background: var(--accent-dim); border-color: var(--accent); }
+  .radio-dot {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 2px solid var(--border); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .18s;
+  }
+  .radio-option.selected .radio-dot { border-color: var(--accent); background: var(--accent); }
+  .radio-option.selected .radio-dot::after {
+    content: ''; width: 6px; height: 6px;
+    border-radius: 50%; background: #0F0F0F;
+  }
+  .radio-label { font-size: 14px; font-weight: 500; color: #ccc; line-height: 1.3; }
+  .radio-option.selected .radio-label { color: var(--text); }
+
+  /* ── Checkbox ── */
+  .checkbox-section { padding: 0 18px 18px; }
+  .section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: .1em;
+    color: var(--text-dim); text-transform: uppercase;
+    margin-bottom: 8px; margin-top: 4px;
+  }
+  .checkbox-grid { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .checkbox-option {
+    display: flex; align-items: center; gap: 11px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 11px 14px; cursor: pointer;
+    transition: all .18s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .checkbox-option:active { transform: scale(0.98); }
+  .checkbox-option.selected { background: var(--accent-dim); border-color: var(--accent); }
+  .checkbox-box {
+    width: 18px; height: 18px; border-radius: 5px;
+    border: 2px solid var(--border); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .18s; font-size: 11px;
+  }
+  .checkbox-option.selected .checkbox-box { border-color: var(--accent); background: var(--accent); color: #0F0F0F; }
+  .checkbox-label { font-size: 13px; font-weight: 500; color: #bbb; line-height: 1.3; }
+  .checkbox-option.selected .checkbox-label { color: var(--text); }
+
+  /* ── Stars ── */
+  .stars-wrap {
+    padding: 0 18px 18px;
+    display: flex; gap: 10px; justify-content: center;
+  }
+  .star {
+    font-size: 36px; cursor: pointer;
+    transition: transform .15s ease;
+    filter: grayscale(1) opacity(.3);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .star.active { filter: none; transform: scale(1.1); }
+  .star:active { transform: scale(0.9); }
+
+  /* ── Conditional ── */
+  .conditional-block { margin: 0 18px 18px; display: none; }
+  .conditional-block.visible { display: block; }
+  .conditional-block textarea,
+  .plain-textarea {
+    width: 100%; background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text); font-family: 'Manrope', sans-serif;
+    font-size: 14px; line-height: 1.6;
+    padding: 13px 14px; resize: vertical; outline: none;
+    transition: border-color .2s; min-height: 72px;
+  }
+  .conditional-block textarea:focus,
+  .plain-textarea:focus { border-color: #444; }
+  .conditional-label { font-size: 12px; color: var(--text-sec); margin-bottom: 7px; font-weight: 600; }
+  .plain-textarea-wrap { padding: 0 18px 18px; }
+
+  /* ── Error ── */
+  .error-msg { font-size: 11px; color: var(--danger); padding: 6px 18px 0; display: none; }
+  .error-msg.visible { display: block; }
+
+  /* ── Submit ── */
+  .submit-wrap { padding: 8px 0 0; max-width: 520px; margin: 0 auto; }
+  .submit-btn {
+    width: 100%; background: var(--accent);
+    border: none; border-radius: var(--radius);
+    color: #0F0F0F; font-family: 'Manrope', sans-serif;
+    font-size: 15px; font-weight: 800;
+    padding: 17px 24px; cursor: pointer;
+    transition: opacity .2s, transform .15s;
+    letter-spacing: .01em;
+  }
+  .submit-btn:active { transform: scale(0.98); }
+  .submit-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+  /* ── Success ── */
+  .success-screen {
+    display: none; flex-direction: column;
+    align-items: center; justify-content: center;
+    min-height: 100vh; padding: 40px 24px; text-align: center;
+  }
+  .success-screen.visible { display: flex; }
+  .success-icon { font-size: 64px; margin-bottom: 20px; }
+  .success-title { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+  .success-sub { font-size: 14px; color: var(--text-sec); line-height: 1.6; max-width: 300px; }
+  .success-badge {
+    margin-top: 24px; background: var(--accent-dim);
+    border: 1px solid rgba(212,240,74,.3);
+    border-radius: 12px; padding: 14px 20px;
+    font-size: 13px; color: var(--accent); font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<!-- SUCCESS -->
+<div class="success-screen" id="successScreen">
+  <div class="success-icon">🎉</div>
+  <div class="success-title">Спасибо!</div>
+  <div class="success-sub">Твои ответы приняты. Используем их, чтобы сделать эфир максимально полезным.</div>
+  <div class="success-badge">📡 Следи за анонсом эфира — разберём всё вместе</div>
+</div>
+
+<!-- FORM -->
+<div id="mainForm">
+
+  <div class="header">
+    <div class="badge">Интенсив · Техника</div>
+    <h1>Обратная связь<br>после тренировок 1–4</h1>
+    <p>Займёт ~3 минуты</p>
+  </div>
+  <div style="max-width:520px;margin:0 auto;padding:16px 16px 0;">
+    <div style="background:#1a1f0e;border:1px solid rgba(212,240,74,0.2);border-radius:14px;padding:16px 18px;font-size:13px;line-height:1.65;color:#bbb;">
+      Твои ответы помогут нам понять, чего не хватает — и скорректировать программу так, чтобы ты получила максимум <span style="color:#D4F04A;font-weight:700;">ещё до окончания интенсива</span>.
+    </div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 6</div>
+  </div>
+
+  <form class="form-body" id="feedbackForm" novalidate>
+
+    <!-- Q1: Почувствовала мышцы -->
+    <div class="q-card" id="card1">
+      <div class="q-head">
+        <div class="q-num">Вопрос 1</div>
+        <div class="q-title">Удалось ли почувствовать целевые мышцы?</div>
+        <div class="q-hint">Ягодицы во время выполнения упражнений</div>
+      </div>
+      <div class="radio-group">
+        <div class="radio-option" data-q="q1" data-val="yes" onclick="selectRadio(this)">
+          <div class="radio-dot"></div><span class="radio-label">Да, чувствую всегда</span>
+        </div>
+        <div class="radio-option" data-q="q1" data-val="sometimes" onclick="selectRadio(this)">
+          <div class="radio-dot"></div><span class="radio-label">Да, но не всегда</span>
+        </div>
+        <div class="radio-option" data-q="q1" data-val="no" onclick="selectRadio(this)">
+          <div class="radio-dot"></div><span class="radio-label">Не чувствую</span>
+        </div>
+      </div>
+      <div class="conditional-block" id="q1conditional">
+        <div class="conditional-label">Какие мышцы чувствуешь вместо ягодиц?</div>
+        <textarea id="q1text" placeholder="Например: квадрицепс, поясница, колени…" rows="2"></textarea>
+      </div>
+      <div class="error-msg" id="q1error">Пожалуйста, выбери один из вариантов</div>
+    </div>
+
+    <!-- Q2: Понимание техники -->
+    <div class="q-card" id="card2">
+      <div class="q-head">
+        <div class="q-num">Вопрос 2</div>
+        <div class="q-title">Как бы ты описала своё понимание техники сейчас?</div>
+      </div>
+      <div class="radio-group">
+        <div class="radio-option" data-q="q2" data-val="feel_body" onclick="selectRadio(this)">
+          <div class="radio-dot"></div><span class="radio-label">Понимаю и чувствую телом</span>
+        </div>
+        <div class="radio-option" data-q="q2" data-val="understand_head" onclick="selectRadio(this)">
+          <div class="radio-dot"></div><span class="radio-label">Понимаю головой, но тело ещё не всегда слушается</span>
+        </div>
+        <div class="radio-option" data-q="q2" data-val="still_hard" onclick="selectRadio(this)">
+          <div class="radio-dot"></div><span class="radio-label">Пока сложно и понять, и почувствовать</span>
+        </div>
+      </div>
+      <div class="error-msg" id="q2error">Пожалуйста, выбери один из вариантов</div>
+    </div>
+
+    <!-- Q3: Дискомфорт / боль -->
+    <div class="q-card" id="card3">
+      <div class="q-head">
+        <div class="q-num">Вопрос 3</div>
+        <div class="q-title">Возникал ли дискомфорт или болевые ощущения во время упражнений?</div>
+      </div>
+      <div class="radio-group">
+        <div class="radio-option" data-q="q3" data-val="no" onclick="selectRadio(this)">
+          <div class="radio-dot"></div><span class="radio-label">Нет, всё ок</span>
+        </div>
+        <div class="radio-option" data-q="q3" data-val="yes" onclick="selectRadio(this)">
+          <div class="radio-dot"></div><span class="radio-label">Да</span>
+        </div>
+      </div>
+      <div class="conditional-block" id="q3conditional">
+        <div class="conditional-label">Укажи упражнение и где именно ощущаешь</div>
+        <textarea id="q3text" placeholder="Например: махи стоя — дискомфорт в колене…" rows="2"></textarea>
+      </div>
+      <div class="error-msg" id="q3error">Пожалуйста, выбери один из вариантов</div>
+    </div>
+
+    <!-- Q4: Рабочий вес -->
+    <div class="q-card" id="card4">
+      <div class="q-head">
+        <div class="q-num">Вопрос 4</div>
+        <div class="q-title">Изменила ли ты подход к рабочему весу в процессе интенсива?</div>
+      </div>
+      <div class="radio-group">
+        <div class="radio-option" data-q="q4" data-val="lowered" onclick="selectRadio(this)">
+          <div class="radio-dot"></div><span class="radio-label">Да, снизила — теперь фокус на ощущении</span>
+        </div>
+        <div class="radio-option" data-q="q4" data-val="same" onclick="selectRadio(this)">
+          <div class="radio-dot"></div><span class="radio-label">Нет, оставила тот же вес</span>
+        </div>
+        <div class="radio-option" data-q="q4" data-val="unsure" onclick="selectRadio(this)">
+          <div class="radio-dot"></div><span class="radio-label">Ещё не определилась</span>
+        </div>
+      </div>
+      <div class="error-msg" id="q4error">Пожалуйста, выбери один из вариантов</div>
+    </div>
+
+    <!-- Q5: Что мешает результату -->
+    <div class="q-card" id="card5">
+      <div class="q-head">
+        <div class="q-num">Вопрос 5</div>
+        <div class="q-title">Что сейчас стоит между тобой и результатом?</div>
+        <div class="q-hint">Можно выбрать несколько</div>
+      </div>
+      <div class="checkbox-section">
+        <div class="checkbox-grid" style="margin-bottom:0">
+          <div class="checkbox-option" data-q="q5" data-val="no_feel" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Не чувствую мышцы в некоторых упражнениях</span></div>
+          <div class="checkbox-option" data-q="q5" data-val="not_sure" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Не уверена в правильности техники</span></div>
+          <div class="checkbox-option" data-q="q5" data-val="need_feedback" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Нужна обратная связь по моему видео</span></div>
+          <div class="checkbox-option" data-q="q5" data-val="discomfort" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Мешает дискомфорт / болевые ощущения</span></div>
+          <div class="checkbox-option" data-q="q5" data-val="no_time" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Не хватает времени на тренировки</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q6: Самая сложная вправа -->
+    <div class="q-card" id="card6">
+      <div class="q-head">
+        <div class="q-num">Вопрос 6</div>
+        <div class="q-title">Какое упражнение оказалось самым сложным?</div>
+        <div class="q-hint">Можно выбрать несколько</div>
+      </div>
+      <div class="checkbox-section">
+        <div class="section-label">🍑 Низ тела</div>
+        <div class="checkbox-grid">
+          <div class="checkbox-option" data-q="q6" data-val="Журавлик" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Журавлик</span></div>
+          <div class="checkbox-option" data-q="q6" data-val="Махи стоя" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Махи стоя</span></div>
+          <div class="checkbox-option" data-q="q6" data-val="Румынская тяга" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Румынская тяга</span></div>
+          <div class="checkbox-option" data-q="q6" data-val="Разведение на большую ягодичную" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Разведение на большую ягодичную</span></div>
+          <div class="checkbox-option" data-q="q6" data-val="Приседания в Смите — большая ягодичная" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Приседания в Смите — большая ягодичная</span></div>
+          <div class="checkbox-option" data-q="q6" data-val="Приседания в Смите — малая и средняя ягодичная" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Приседания в Смите — малая и средняя ягодичная</span></div>
+          <div class="checkbox-option" data-q="q6" data-val="Ягодичный мост" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Ягодичный мост</span></div>
+          <div class="checkbox-option" data-q="q6" data-val="Журавлик в кроссовере" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Журавлик в кроссовере</span></div>
+          <div class="checkbox-option" data-q="q6" data-val="Жим платформой ягодицами" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Жим платформой ягодицами</span></div>
+        </div>
+        <div class="section-label">💪 Верх тела</div>
+        <div class="checkbox-grid" style="margin-bottom:0">
+          <div class="checkbox-option" data-q="q6" data-val="Тяга верхнего блока" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Тяга верхнего блока</span></div>
+          <div class="checkbox-option" data-q="q6" data-val="Тяга узким хватом" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Тяга узким хватом</span></div>
+          <div class="checkbox-option" data-q="q6" data-val="Тяга гантели в наклоне" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Тяга гантели в наклоне</span></div>
+          <div class="checkbox-option" data-q="q6" data-val="Жим передней дельтой над головой" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Жим передней дельтой над головой</span></div>
+          <div class="checkbox-option" data-q="q6" data-val="Протяжка штанги на среднюю дельту" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Протяжка штанги на среднюю дельту</span></div>
+          <div class="checkbox-option" data-q="q6" data-val="Махи поочерёдно на среднюю дельту" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Махи поочерёдно на среднюю дельту</span></div>
+          <div class="checkbox-option" data-q="q6" data-val="Задняя дельта в наклоне" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Задняя дельта в наклоне</span></div>
+          <div class="checkbox-option" data-q="q6" data-val="Жим штанги из-за головы" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Жим штанги из-за головы</span></div>
+          <div class="checkbox-option" data-q="q6" data-val="Махи двумя руками" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Махи двумя руками</span></div>
+          <div class="checkbox-option" data-q="q6" data-val="Задняя дельта в кроссовере" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Задняя дельта в кроссовере</span></div>
+          <div class="checkbox-option" data-q="q6" data-val="Тяга в наклоне обратным хватом в кроссовере" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Тяга в наклоне обратным хватом в кроссовере</span></div>
+          <div class="checkbox-option" data-q="q6" data-val="Верхняя тяга обратным хватом" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Верхняя тяга обратным хватом</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q7: Нужна помощь -->
+    <div class="q-card" id="card7">
+      <div class="q-head">
+        <div class="q-num">Вопрос 7</div>
+        <div class="q-title">По какому упражнению нужны дополнительные объяснения?</div>
+        <div class="q-hint">С чем до сих пор не до конца понятно</div>
+      </div>
+      <div class="checkbox-section">
+        <div class="section-label">🍑 Низ тела</div>
+        <div class="checkbox-grid">
+          <div class="checkbox-option" data-q="q7" data-val="Журавлик" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Журавлик</span></div>
+          <div class="checkbox-option" data-q="q7" data-val="Махи стоя" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Махи стоя</span></div>
+          <div class="checkbox-option" data-q="q7" data-val="Румынская тяга" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Румынская тяга</span></div>
+          <div class="checkbox-option" data-q="q7" data-val="Разведение на большую ягодичную" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Разведение на большую ягодичную</span></div>
+          <div class="checkbox-option" data-q="q7" data-val="Приседания в Смите — большая ягодичная" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Приседания в Смите — большая ягодичная</span></div>
+          <div class="checkbox-option" data-q="q7" data-val="Приседания в Смите — малая и средняя ягодичная" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Приседания в Смите — малая и средняя ягодичная</span></div>
+          <div class="checkbox-option" data-q="q7" data-val="Ягодичный мост" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Ягодичный мост</span></div>
+          <div class="checkbox-option" data-q="q7" data-val="Журавлик в кроссовере" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Журавлик в кроссовере</span></div>
+          <div class="checkbox-option" data-q="q7" data-val="Жим платформой ягодицами" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Жим платформой ягодицами</span></div>
+        </div>
+        <div class="section-label">💪 Верх тела</div>
+        <div class="checkbox-grid" style="margin-bottom:0">
+          <div class="checkbox-option" data-q="q7" data-val="Тяга верхнего блока" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Тяга верхнего блока</span></div>
+          <div class="checkbox-option" data-q="q7" data-val="Тяга узким хватом" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Тяга узким хватом</span></div>
+          <div class="checkbox-option" data-q="q7" data-val="Тяга гантели в наклоне" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Тяга гантели в наклоне</span></div>
+          <div class="checkbox-option" data-q="q7" data-val="Жим передней дельтой над головой" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Жим передней дельтой над головой</span></div>
+          <div class="checkbox-option" data-q="q7" data-val="Протяжка штанги на среднюю дельту" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Протяжка штанги на среднюю дельту</span></div>
+          <div class="checkbox-option" data-q="q7" data-val="Махи поочерёдно на среднюю дельту" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Махи поочерёдно на среднюю дельту</span></div>
+          <div class="checkbox-option" data-q="q7" data-val="Задняя дельта в наклоне" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Задняя дельта в наклоне</span></div>
+          <div class="checkbox-option" data-q="q7" data-val="Жим штанги из-за головы" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Жим штанги из-за головы</span></div>
+          <div class="checkbox-option" data-q="q7" data-val="Махи двумя руками" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Махи двумя руками</span></div>
+          <div class="checkbox-option" data-q="q7" data-val="Задняя дельта в кроссовере" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Задняя дельта в кроссовере</span></div>
+          <div class="checkbox-option" data-q="q7" data-val="Тяга в наклоне обратным хватом в кроссовере" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Тяга в наклоне обратным хватом в кроссовере</span></div>
+          <div class="checkbox-option" data-q="q7" data-val="Верхняя тяга обратным хватом" onclick="toggleCheckbox(this)"><div class="checkbox-box"></div><span class="checkbox-label">Верхняя тяга обратным хватом</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q8: Оценка информации -->
+    <div class="q-card" id="card8">
+      <div class="q-head">
+        <div class="q-num">Вопрос 8</div>
+        <div class="q-title">Оцени информацию, которую тебе дали</div>
+        <div class="q-hint">Насколько понятно и полно была подана подача материала</div>
+      </div>
+      <div class="stars-wrap">
+        <span class="star" onclick="selectStar(1)">⭐</span>
+        <span class="star" onclick="selectStar(2)">⭐</span>
+        <span class="star" onclick="selectStar(3)">⭐</span>
+        <span class="star" onclick="selectStar(4)">⭐</span>
+        <span class="star" onclick="selectStar(5)">⭐</span>
+      </div>
+      <div class="conditional-block" id="q8conditional">
+        <div class="conditional-label">Чего не хватало? Что можно улучшить?</div>
+        <textarea id="q8text" placeholder="Напиши, что было непонятно или чего не хватило…" rows="3"></textarea>
+      </div>
+      <div class="error-msg" id="q8error">Пожалуйста, поставь оценку</div>
+    </div>
+
+    <!-- Q9: Ожидания vs реальность -->
+    <div class="q-card" id="card9">
+      <div class="q-head">
+        <div class="q-num">Вопрос 9</div>
+        <div class="q-title">Интенсив: ожидания vs реальность</div>
+        <div class="q-hint">Совпало ли то, чего ты ждала, с тем, что получаешь</div>
+      </div>
+      <div class="radio-group">
+        <div class="radio-option" data-q="q9" data-val="better" onclick="selectRadio(this); showQ9field(false)">
+          <div class="radio-dot"></div><span class="radio-label">🔥 Лучше, чем ожидала</span>
+        </div>
+        <div class="radio-option" data-q="q9" data-val="match" onclick="selectRadio(this); showQ9field(false)">
+          <div class="radio-dot"></div><span class="radio-label">👍 Совпадает с ожиданиями</span>
+        </div>
+        <div class="radio-option" data-q="q9" data-val="partial" onclick="selectRadio(this); showQ9field(true)">
+          <div class="radio-dot"></div><span class="radio-label">🤔 Частично совпадает</span>
+        </div>
+        <div class="radio-option" data-q="q9" data-val="less" onclick="selectRadio(this); showQ9field(true)">
+          <div class="radio-dot"></div><span class="radio-label">😕 Ожидала большего</span>
+        </div>
+      </div>
+      <div class="conditional-block" id="q9conditional">
+        <div class="conditional-label">Что именно не оправдало ожиданий?</div>
+        <textarea id="q9text" placeholder="Напиши, чего не хватает или что хотелось бы иначе…" rows="3"></textarea>
+      </div>
+      <div class="error-msg" id="q9error">Пожалуйста, выбери один из вариантов</div>
+    </div>
+
+    <!-- Q10: Есть ли вопросы -->
+    <div class="q-card" id="card10">
+      <div class="q-head">
+        <div class="q-num">Вопрос 10</div>
+        <div class="q-title">Есть ли у тебя вопросы?</div>
+      </div>
+      <div class="radio-group">
+        <div class="radio-option" data-q="q10" data-val="yes" onclick="selectRadio(this); showQ10field(true)">
+          <div class="radio-dot"></div><span class="radio-label">Да, есть</span>
+        </div>
+        <div class="radio-option" data-q="q10" data-val="no" onclick="selectRadio(this); showQ10field(false)">
+          <div class="radio-dot"></div><span class="radio-label">Нет, пока всё понятно</span>
+        </div>
+      </div>
+      <div class="conditional-block" id="q10conditional">
+        <div class="conditional-label">Напиши свой вопрос</div>
+        <textarea id="q10text" placeholder="Например: почему во время жима платформой чувствую заднюю поверхность бедра…" rows="3"></textarea>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="submit-wrap">
+      <button type="button" class="submit-btn" id="submitBtn" onclick="submitForm()">
+        Отправить ответы →
+      </button>
+    </div>
+
+  </form>
+</div>
+
+<script>
+  const MAKE_WEBHOOK_URL = 'https://hook.eu1.make.com/ТВОЙ_WEBHOOK_URL';
+
+  const state = {
+    q1: null, q1_text: '',
+    q2: null,
+    q3: null, q3_text: '',
+    q4: null,
+    q5: [],
+    q6: [],
+    q7: [],
+    q8_stars: null, q8_text: '',
+    q9: null, q9_text: '',
+    q10: null, q10_text: '',
+  };
+
+  // Required: q1, q2, q3, q4, q8_stars, q9
+  const REQUIRED_COUNT = 6;
+
+  function getRequiredAnswered() {
+    return [state.q1, state.q2, state.q3, state.q4, state.q8_stars, state.q9].filter(Boolean).length;
+  }
+
+  function updateProgress() {
+    const n = getRequiredAnswered();
+    document.getElementById('progressFill').style.width = (n / REQUIRED_COUNT * 100) + '%';
+    document.getElementById('progressLabel').textContent = n + ' / ' + REQUIRED_COUNT;
+  }
+
+  function selectRadio(el) {
+    const q = el.dataset.q;
+    const val = el.dataset.val;
+    document.querySelectorAll(`.radio-option[data-q="${q}"]`).forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    state[q] = val;
+
+    if (q === 'q1') {
+      const c = document.getElementById('q1conditional');
+      c.classList.toggle('visible', val === 'no');
+      if (val !== 'no') state.q1_text = '';
+    }
+    if (q === 'q3') {
+      const c = document.getElementById('q3conditional');
+      c.classList.toggle('visible', val === 'yes');
+      if (val !== 'yes') state.q3_text = '';
+    }
+
+    updateProgress();
+  }
+
+  function showQ9field(show) {
+    document.getElementById('q9conditional').classList.toggle('visible', show);
+    if (!show) state.q9_text = '';
+  }
+
+  function showQ10field(show) {
+    document.getElementById('q10conditional').classList.toggle('visible', show);
+    if (!show) state.q10_text = '';
+  }
+
+  function toggleCheckbox(el) {
+    const q = el.dataset.q;
+    const val = el.dataset.val;
+    el.classList.toggle('selected');
+    const box = el.querySelector('.checkbox-box');
+    if (el.classList.contains('selected')) {
+      box.textContent = '✓';
+      state[q].push(val);
+    } else {
+      box.textContent = '';
+      state[q] = state[q].filter(v => v !== val);
+    }
+    updateProgress();
+  }
+
+  function selectStar(n) {
+    state.q8_stars = n;
+    document.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('active', i < n));
+    document.getElementById('q8conditional').classList.toggle('visible', n <= 3);
+    if (n > 3) state.q8_text = '';
+    updateProgress();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('q1text').addEventListener('input', e => state.q1_text = e.target.value);
+    document.getElementById('q3text').addEventListener('input', e => state.q3_text = e.target.value);
+    document.getElementById('q8text').addEventListener('input', e => state.q8_text = e.target.value);
+    document.getElementById('q9text').addEventListener('input', e => state.q9_text = e.target.value);
+    document.getElementById('q10text').addEventListener('input', e => state.q10_text = e.target.value);
+  });
+
+  function validate() {
+    let ok = true;
+    const checks = [
+      { key: 'q1',       errId: 'q1error',  cardId: 'card1' },
+      { key: 'q2',       errId: 'q2error',  cardId: 'card2' },
+      { key: 'q3',       errId: 'q3error',  cardId: 'card3' },
+      { key: 'q4',       errId: 'q4error',  cardId: 'card4' },
+      { key: 'q8_stars', errId: 'q8error',  cardId: 'card8' },
+      { key: 'q9',       errId: 'q9error',  cardId: 'card9' },
+    ];
+    checks.forEach(c => document.getElementById(c.errId).classList.remove('visible'));
+
+    for (const c of checks) {
+      if (!state[c.key]) {
+        document.getElementById(c.errId).classList.add('visible');
+        if (ok) document.getElementById(c.cardId).scrollIntoView({ behavior: 'smooth', block: 'center' });
+        ok = false;
+      }
+    }
+    return ok;
+  }
+
+  async function submitForm() {
+    if (!validate()) return;
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Отправляем…';
+
+    const payload = {
+      q1_feel_muscles:        state.q1,
+      q1_muscles_instead:     state.q1_text || null,
+      q2_tech_understanding:  state.q2,
+      q3_discomfort:          state.q3,
+      q3_discomfort_detail:   state.q3_text || null,
+      q4_weight_approach:     state.q4,
+      q5_barriers:            state.q5.join(', ') || null,
+      q6_hardest_exercises:   state.q6.join(', ') || null,
+      q7_need_help:           state.q7.join(', ') || null,
+      q8_info_rating:         state.q8_stars,
+      q8_missing_info:        state.q8_text || null,
+      q9_expectations:        state.q9,
+      q9_expectations_detail: state.q9_text || null,
+      q10_has_question:       state.q10,
+      q10_question_text:      state.q10_text || null,
+      submitted_at:           new Date().toISOString(),
+    };
+
+    try {
+      await fetch(MAKE_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        mode: 'no-cors',
+      });
+      document.getElementById('mainForm').style.display = 'none';
+      document.getElementById('successScreen').classList.add('visible');
+    } catch (err) {
+      console.error(err);
+      btn.disabled = false;
+      btn.textContent = 'Попробовать снова';
+    }
+  }
+</script>
+</body>
+</html>
