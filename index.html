@@ -575,6 +575,8 @@
     if (!arr || arr.length === 0) return null;
     return arr.map(v => LABELS[group]?.[v] ?? v).join(', ');
   }
+
+  const state = {
     q1: null, q1_text: '',
     q2: null,
     q3: null, q3_text: '',
